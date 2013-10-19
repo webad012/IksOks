@@ -52,6 +52,12 @@ GameField::GameField(SDL_Surface *screen, int statusBarHeight)
 
 GameField::~GameField()
 {
+    for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); ++it)
+    {
+        delete *it;
+        *it = NULL;
+    }
+
     SDL_FreeSurface(doneCoveringSurface);
     TTF_CloseFont(restartFont);
     SDL_FreeSurface(restartFontSurface);

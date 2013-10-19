@@ -19,6 +19,7 @@ public:
     void handle_rendering(SDL_Surface*);
 
     void SetType(int);
+    void SetWinningField();
 
     SDL_Rect GetRect();
     FieldType GetType();
@@ -31,6 +32,8 @@ private:
     SDL_Rect imageRect;
 
     SDL_Surface* load_image(std::string);
+
+    bool winningField;
 };
 
 #endif

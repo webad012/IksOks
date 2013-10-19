@@ -13,7 +13,10 @@ StatusBar::StatusBar(SDL_Surface* screen, int height)
         throw std::string("statusFont problem - " + std::string(TTF_GetError()));
     }
 
-    textColorBlack = {0, 0, 0, 0};
+    textColorBlack.r = 0;
+    textColorBlack.g = 0;
+    textColorBlack.b = 0;
+    textColorBlack.unused = 0;
 
     currentPlayer = 0;
 
@@ -47,11 +50,21 @@ void StatusBar::handle_logic(bool gameDone, int playerNum)
     }
     else if((gameDone == true) && (previous_gamedone_status == false))
     {
-        currentPlayer = playerNum;
         messageSS.str("");
         messageSS.clear();
-        messageSS << "Pobednik: " << currentPlayer << ". igrač";
-        std::cout << messageSS.str() << std::endl;
+
+        if(playerNum == 0)
+        {
+            messageSS << "Nema pobednika!";
+        }
+        else if(playerNum == 1 || playerNum == 2)
+        {
+            messageSS << "Pobednik: " << playerNum << ". igrač.";
+        }
+        else
+        {
+            throw std::string("StatusBar::handle_logic - wrong playerNum value: " + playerNum);
+        }
 
         SDL_FreeSurface(messageSurface);
         messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);

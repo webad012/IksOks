@@ -94,27 +94,10 @@ void GameField::handle_rendering(SDL_Surface *screen)
 {
     SDL_FillRect(screen, &fieldRect, 0x000000);
 
-//    drawField(screen);
-
     for(int i=0; i<9; i++)
     {
         fields[i]->handle_rendering(screen);
     }
-}
-
-void GameField::drawField(SDL_Surface *screen)
-{
-    // vertical 1
-    lineColor(screen, fieldRect.w/3, fieldRect.y, fieldRect.w/3, fieldRect.h+fieldRect.y, 0x00000FF);
-
-    // vertical 2
-    lineColor(screen, 2*(fieldRect.w/3), fieldRect.y, 2*(fieldRect.w/3), fieldRect.h+fieldRect.y, 0x00000FF);
-
-    // horizontal 1
-    lineColor(screen, 0, fieldRect.h/3 +fieldRect.y, fieldRect.w, fieldRect.h/3 +fieldRect.y, 0x00000FF);
-
-//    // horizontal 2
-    lineColor(screen, 0, 2*(fieldRect.h/3) +fieldRect.y, fieldRect.w, 2*(fieldRect.h/3) +fieldRect.y, 0x00000FF);
 }
 
 Field::FieldType GameField::checkForWinner()
@@ -124,48 +107,72 @@ Field::FieldType GameField::checkForWinner()
     // top row
     if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[1]->GetType()) && (fields[0]->GetType() == fields[2]->GetType()) )
     {
+        fields[0]->SetWinningField();
+        fields[1]->SetWinningField();
+        fields[2]->SetWinningField();
         winner = fields[0]->GetType();
     }
 
     // middle row
     if( (fields[3]->GetType() != Field::FT_NONE) && (fields[3]->GetType() == fields[4]->GetType()) && (fields[3]->GetType() == fields[5]->GetType()) )
     {
+        fields[3]->SetWinningField();
+        fields[4]->SetWinningField();
+        fields[5]->SetWinningField();
         winner = fields[3]->GetType();
     }
 
     // bottom row
     if( (fields[6]->GetType() != Field::FT_NONE) && (fields[6]->GetType() == fields[7]->GetType()) && (fields[7]->GetType() == fields[8]->GetType()) )
     {
+        fields[6]->SetWinningField();
+        fields[7]->SetWinningField();
+        fields[8]->SetWinningField();
         winner = fields[6]->GetType();
     }
 
     // topleft-downright diagonal
     if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[4]->GetType()) && (fields[0]->GetType() == fields[8]->GetType()) )
     {
+        fields[0]->SetWinningField();
+        fields[4]->SetWinningField();
+        fields[8]->SetWinningField();
         winner = fields[0]->GetType();
     }
 
     // topright-downleft diagonal
     if( (fields[2]->GetType() != Field::FT_NONE) && (fields[2]->GetType() == fields[4]->GetType()) && (fields[2]->GetType() == fields[6]->GetType()) )
     {
+        fields[2]->SetWinningField();
+        fields[4]->SetWinningField();
+        fields[6]->SetWinningField();
         winner = fields[2]->GetType();
     }
 
     // left column
-    if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[3]->GetType()) && (fields[0]->GetType() == fields[5]->GetType()) )
+    if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[3]->GetType()) && (fields[0]->GetType() == fields[6]->GetType()) )
     {
+        fields[0]->SetWinningField();
+        fields[3]->SetWinningField();
+        fields[6]->SetWinningField();
         winner = fields[0]->GetType();
     }
 
     // middle column
     if( (fields[1]->GetType() != Field::FT_NONE) && (fields[1]->GetType() == fields[4]->GetType()) && (fields[1]->GetType() == fields[7]->GetType()) )
     {
+        fields[1]->SetWinningField();
+        fields[4]->SetWinningField();
+        fields[7]->SetWinningField();
         winner = fields[1]->GetType();
     }
 
     // right column
     if( (fields[2]->GetType() != Field::FT_NONE) && (fields[2]->GetType() == fields[5]->GetType()) && (fields[2]->GetType() == fields[8]->GetType()) )
     {
+        fields[2]->SetWinningField();
+        fields[5]->SetWinningField();
+        fields[8]->SetWinningField();
         winner = fields[2]->GetType();
     }
 

@@ -47,6 +47,8 @@ Field::Field(int num, SDL_Surface *screen, int statusBarHeight)
 
     imageRect.x = fieldRect.x + ((fieldRect.w-oksSurface->w)/2);
     imageRect.y = fieldRect.y + ((fieldRect.h-oksSurface->h)/2);
+
+    winningField = false;
 }
 
 Field::~Field()
@@ -80,6 +82,29 @@ void Field::handle_rendering(SDL_Surface* screen)
     else if(fieldType == FT_OKS)
     {
         SDL_BlitSurface(oksSurface, NULL, screen, &imageRect);
+    }
+
+    if(winningField == true)
+    {
+        //left
+        lineColor(screen, fieldRect.x+1, fieldRect.y+1, fieldRect.x+1, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+2, fieldRect.y+1, fieldRect.x+2, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+3, fieldRect.y+1, fieldRect.x+3, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+
+        //right
+        lineColor(screen, fieldRect.x+fieldRect.w-2, fieldRect.y+1, fieldRect.x+fieldRect.w-2, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+fieldRect.w-3, fieldRect.y+1, fieldRect.x+fieldRect.w-3, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+fieldRect.w-4, fieldRect.y+1, fieldRect.x+fieldRect.w-4, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+
+        //bottom
+        lineColor(screen, fieldRect.x+1, fieldRect.y+fieldRect.h-2, fieldRect.x+fieldRect.w-2, fieldRect.h+fieldRect.y-2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+1, fieldRect.y+fieldRect.h-3, fieldRect.x+fieldRect.w-2, fieldRect.h+fieldRect.y-3, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+1, fieldRect.y+fieldRect.h-4, fieldRect.x+fieldRect.w-2, fieldRect.h+fieldRect.y-4, 0x00AA00FF);
+
+        //top
+        lineColor(screen, fieldRect.x+1, fieldRect.y+1, fieldRect.x+fieldRect.w-2, fieldRect.y+1, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+1, fieldRect.y+2, fieldRect.x+fieldRect.w-2, fieldRect.y+2, 0x00AA00FF);
+        lineColor(screen, fieldRect.x+1, fieldRect.y+3, fieldRect.x+fieldRect.w-2, fieldRect.y+3, 0x00AA00FF);
     }
 }
 
@@ -133,3 +158,7 @@ SDL_Surface* Field::load_image(std::string filename)
     return optimizedImage;
 }
 
+void Field::SetWinningField()
+{
+    winningField = true;
+}

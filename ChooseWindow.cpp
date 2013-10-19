@@ -2,9 +2,9 @@
 
 ChooseWindow::ChooseWindow()
 {
-    PvP = TTF_RenderText_Solid(font20, "Player vs Player", textColorWhite);
-    PvA = TTF_RenderText_Solid(font20, "Player vs AI", textColorWhite);
-    exit = TTF_RenderText_Solid(font20, "Exit", textColorWhite);
+    PvP = TTF_RenderUTF8_Solid(font20, "Igrač protiv Igrača", textColorWhite);
+    PvA = TTF_RenderUTF8_Solid(font20, "Igrač protiv Računara", textColorWhite);
+    exit = TTF_RenderUTF8_Solid(font20, "Izađi", textColorWhite);
 
     pvpRect.x = (screen->w - PvP->w)/2;
     pvpRect.y = screen->h/4;
@@ -77,7 +77,7 @@ void ChooseWindow::handle_events(bool* quit, GameState* gamestate)
                 }
                 else if( CompareRect(selectedRect, pvaRect) )
                 {
-//                    *gamestate = GameWindow::GS_PlayStatePvA;
+                    *gamestate = GameWindow::GS_PlayStatePvA;
                 }
                 else if( CompareRect(selectedRect, exitRect) )
                 {
@@ -96,7 +96,7 @@ void ChooseWindow::handle_events(bool* quit, GameState* gamestate)
                 }
                 else if( IfMouseOverRect(event, pvaRect) )
                 {
-//                    *gamestate = GameWindow::GS_PlayStatePvA;
+                    *gamestate = GameWindow::GS_PlayStatePvA;
                 }
                 else if( IfMouseOverRect(event, exitRect) )
                 {

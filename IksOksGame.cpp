@@ -23,8 +23,11 @@ IksOksGame::IksOksGame()
 IksOksGame::~IksOksGame()
 {
     delete _start_window;
+    _start_window = NULL;
     delete _choose_window;
+    _choose_window = NULL;
     delete _play_window;
+    _play_window = NULL;
     TTF_Quit();
     SDL_Quit();
 }
@@ -62,6 +65,12 @@ void IksOksGame::handle_logic()
             _play_window->SetState(_game_state);
         }
         _play_window->handle_logic();
+    }
+    else if( _game_state == GameWindow::GS_EndGame )
+    {
+        delete _play_window;
+        _play_window = new PlayWindow();
+        _game_state = GameWindow::GS_ChooseState;
     }
 }
 

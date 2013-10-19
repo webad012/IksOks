@@ -17,7 +17,7 @@ public:
 
     void handle_events(SDL_Event, int*);
     void handle_logic(bool*, int*);
-    void handle_rendering(SDL_Surface*);
+    void handle_rendering(bool, SDL_Surface*);
 
     int GetWinnerNum();
 
@@ -32,6 +32,14 @@ private:
     int winnerNum;
     int previousFieldsLeft;
 
+    SDL_Surface *doneCoveringSurface;
+    SDL_Surface *restartFontSurface;
+    SDL_Rect restartFontRect;
+    TTF_Font *restartFont;
+    SDL_Color textColorWhite, textColorBlack;
+    Uint32 last_time;
+    Uint32 blinkTime;
+    bool drawMe;
 };
 
 #endif

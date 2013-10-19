@@ -12,7 +12,7 @@ public:
     GameWindow();
     ~GameWindow();
 
-    enum GameState { GS_StartState, GS_ChooseState, GS_PlayState, GS_PlayStatePvP, GS_PlayStatePvA, GS_EndState };
+    enum GameState { GS_StartState, GS_ChooseState, GS_PlayState, GS_PlayStatePvP, GS_PlayStatePvA, GS_EndGame };
 
     virtual void handle_events(bool*, GameState*) = 0;
     virtual void handle_logic() = 0;

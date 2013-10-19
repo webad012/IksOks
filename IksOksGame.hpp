@@ -25,7 +25,6 @@ private:
     StartWindow *_start_window;
     ChooseWindow *_choose_window;
     PlayWindow *_play_window;
-//    EndWindow _end_window;
 };
 
 #endif

@@ -26,9 +26,12 @@ int main()
 
             /// rendering
             game->handle_rendering();
+
+            SDL_Delay(5);
         }
 
         delete game;
+        game = NULL;
 
         return 0;
     }

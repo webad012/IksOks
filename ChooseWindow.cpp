@@ -21,7 +21,9 @@ ChooseWindow::ChooseWindow()
     exitRect.w = exit->w;
     exitRect.h = exit->h;
 
-    borderColor = {50, 50, 150, 255};
+    borderColor.r = 50;
+    borderColor.g = 50;
+    borderColor.b = 150;
 
     selectedRect = pvpRect;
 }

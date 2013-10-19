@@ -21,11 +21,40 @@ GameField::GameField(SDL_Surface *screen, int statusBarHeight)
 
     winnerNum = -1;
     previousFieldsLeft = 9;
+
+    doneCoveringSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_ANYFORMAT, screen->w, screen->h, screen->format->BitsPerPixel, 0, 0, 0, 0);
+	SDL_FillRect(doneCoveringSurface, NULL, SDL_MapRGBA(screen->format, 0xAA, 0xAA, 0xAA, 0xFF));
+	SDL_SetAlpha(doneCoveringSurface, SDL_SRCALPHA, 100);
+
+	restartFont = TTF_OpenFont( "fonts-japanese-gothic.ttf", 50 );
+    if( restartFont == NULL )
+    {
+        throw std::string("restartFont problem - " + std::string(TTF_GetError()));
+    }
+    textColorWhite.r = 255;
+    textColorWhite.g = 255;
+    textColorWhite.b = 255;
+    textColorWhite.unused = 255;
+
+    textColorBlack.r = 0;
+    textColorBlack.g = 0;
+    textColorBlack.b = 0;
+    textColorBlack.unused = 255;
+
+    restartFontSurface = TTF_RenderUTF8_Shaded(restartFont, "Pritisni Enter", textColorWhite, textColorBlack);
+    restartFontRect.x = (screen->w - restartFontSurface->w)/2;
+    restartFontRect.y = (screen->h - restartFontSurface->h)/2;
+
+    last_time = SDL_GetTicks();
+    drawMe = true;
+    blinkTime = 800;
 }
 
 GameField::~GameField()
 {
-
+    SDL_FreeSurface(doneCoveringSurface);
+    TTF_CloseFont(restartFont);
+    SDL_FreeSurface(restartFontSurface);
 }
 
 void GameField::handle_events(SDL_Event event, int *currentPlayer)
@@ -90,13 +119,31 @@ void GameField::handle_logic(bool* gameDone, int *currentPlayer)
     }
 }
 
-void GameField::handle_rendering(SDL_Surface *screen)
+void GameField::handle_rendering(bool gameDone, SDL_Surface *screen)
 {
-    SDL_FillRect(screen, &fieldRect, 0x000000);
+    SDL_FillRect(screen, &fieldRect, SDL_MapRGBA(screen->format, 0x00, 0x00, 0x00, 0xFF));
 
     for(int i=0; i<9; i++)
     {
         fields[i]->handle_rendering(screen);
+    }
+
+    if(gameDone)
+    {
+        SDL_BlitSurface(doneCoveringSurface, NULL, screen, &fieldRect);
+
+        /// blinking text
+        Uint32 this_time = SDL_GetTicks();
+        if(this_time - last_time >= blinkTime)
+        {
+            last_time = this_time;
+            drawMe = !drawMe;
+        }
+        if(drawMe)
+        {
+            SDL_BlitSurface(restartFontSurface, NULL, screen, &restartFontRect);
+        }
+//        ApplySurface( (screen->w - blinkingText->w)/2, screen->h - screen->h/2, blinkingText, screen );
     }
 }
 

@@ -42,7 +42,6 @@ void StatusBar::handle_logic(bool gameDone, int playerNum)
         messageSS.str("");
         messageSS.clear();
         messageSS << "Na potezu igrač: " << currentPlayer;
-        std::cout << messageSS.str() << std::endl;
 
         SDL_FreeSurface(messageSurface);
         messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);
@@ -55,7 +54,7 @@ void StatusBar::handle_logic(bool gameDone, int playerNum)
 
         if(playerNum == 0)
         {
-            messageSS << "Nema pobednika!";
+            messageSS << "Nema pobednika.";
         }
         else if(playerNum == 1 || playerNum == 2)
         {

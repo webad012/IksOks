@@ -26,7 +26,9 @@ GameWindow::GameWindow()
         throw std::string("font10 problem - " + std::string(TTF_GetError()));
     }
 
-    textColorWhite =  {255, 255, 255, 255};
+    textColorWhite.r = 255;
+    textColorWhite.g = 255;
+    textColorWhite.b = 255;
 }
 
 GameWindow::~GameWindow()

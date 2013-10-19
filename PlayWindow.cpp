@@ -25,6 +25,13 @@ void PlayWindow::handle_events(bool* quit, GameState* gamestate)
         {
             _game_field->handle_events(event, &currentPlayer);
         }
+        else if(gameDone == true)
+        {
+            if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_RETURN) )
+            {
+                *gamestate = GameWindow::GS_EndGame;
+            }
+        }
 
         if( event.type == SDL_QUIT )
         {
@@ -55,7 +62,7 @@ void PlayWindow::handle_rendering()
 {
     SDL_FillRect(screen, NULL, 0x000000);
     _status_bar->handle_rendering(screen);
-    _game_field->handle_rendering(screen);
+    _game_field->handle_rendering(gameDone, screen);
 
     if( SDL_Flip(screen) == -1 )
     {

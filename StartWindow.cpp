@@ -6,9 +6,9 @@ StartWindow::StartWindow()
     drawMe = true;
     blinkTime = 800;
 
-    gameName = TTF_RenderText_Solid(font50, "IKS OKS", textColorWhite);
-    blinkingText = TTF_RenderText_Solid(font20, "Press Enter to start.", textColorWhite);
-    bySignature = TTF_RenderText_Solid(font10, "By: Milos Jankovic", textColorWhite);
+    gameName = TTF_RenderUTF8_Solid(font50, "IKS OKS", textColorWhite);
+    blinkingText = TTF_RenderUTF8_Solid(font20, "Pritisni Enter za start.", textColorWhite);
+    bySignature = TTF_RenderUTF8_Solid(font10, "Napravio: Miloš Janković", textColorWhite);
 }
 
 StartWindow::~StartWindow()
@@ -65,6 +65,8 @@ void StartWindow::handle_rendering()
     {
         throw std::string("flip problem");
     }
+
+    SDL_Delay(1);
 }
 
 

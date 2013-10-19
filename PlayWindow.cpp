@@ -4,15 +4,17 @@ PlayWindow::PlayWindow()
 : statusBarHeight(30)
 {
     playState = GameWindow::GS_PlayState;
-    currentPlayer = 0;
+    currentPlayer = 1;
     _status_bar = new StatusBar(screen, statusBarHeight);
     _game_field = new GameField(screen, statusBarHeight);
     gameDone = false;
+    winnerNum = -1;
 }
 
 PlayWindow::~PlayWindow()
 {
-
+    delete _status_bar;
+    delete _game_field;
 }
 
 void PlayWindow::handle_events(bool* quit, GameState* gamestate)
@@ -21,7 +23,7 @@ void PlayWindow::handle_events(bool* quit, GameState* gamestate)
     {
         if(gameDone == false)
         {
-            _game_field->handle_events(event);
+            _game_field->handle_events(event, &currentPlayer);
         }
 
         if( event.type == SDL_QUIT )
@@ -33,8 +35,20 @@ void PlayWindow::handle_events(bool* quit, GameState* gamestate)
 
 void PlayWindow::handle_logic()
 {
-    _status_bar->handle_logic(currentPlayer);
-    _game_field->handle_logic(&gameDone);
+    if(gameDone == true)
+    {
+        if(winnerNum == -1)
+        {
+            winnerNum = _game_field->GetWinnerNum();
+        }
+
+         _status_bar->handle_logic(true, winnerNum);
+    }
+    else
+    {
+        _status_bar->handle_logic(false, currentPlayer);
+        _game_field->handle_logic(&gameDone, &currentPlayer);
+    }
 }
 
 void PlayWindow::handle_rendering()
@@ -47,6 +61,8 @@ void PlayWindow::handle_rendering()
     {
         throw std::string("flip problem");
     }
+
+    SDL_Delay(1);
 }
 
 void PlayWindow::SetState(GameState state)

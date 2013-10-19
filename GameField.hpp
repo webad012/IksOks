@@ -15,9 +15,11 @@ public:
     GameField(SDL_Surface*, int statusBarHeight);
     ~GameField();
 
-    void handle_events(SDL_Event);
-    void handle_logic(bool*);
+    void handle_events(SDL_Event, int*);
+    void handle_logic(bool*, int*);
     void handle_rendering(SDL_Surface*);
+
+    int GetWinnerNum();
 
 private:
     SDL_Rect fieldRect;
@@ -28,6 +30,8 @@ private:
     Field::FieldType checkForWinner();
 
     int winnerNum;
+    int previousFieldsLeft;
+
 };
 
 #endif

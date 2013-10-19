@@ -31,15 +31,28 @@ Field::Field(int num, SDL_Surface *screen, int statusBarHeight)
     fieldRect.w = screen->w/3-1;
     fieldRect.h = screen->w/3-1;
 
-    clicked = false;
     fieldType = FT_NONE;
 
-//    std::cout << "field num: " << num << " - x:" << fieldRect.x << " - y:" << fieldRect.y << " - w:" << fieldRect.w << " - h:" << fieldRect.h << std::endl;
+    oksSurface = load_image( "oks.png" );
+    if(oksSurface == NULL)
+    {
+        throw std::string("oks.png load image fail");
+    }
+
+    iksSurface = load_image( "iks.png" );
+    if(iksSurface == NULL)
+    {
+        throw std::string("iks.png load image fail");
+    }
+
+    imageRect.x = fieldRect.x + ((fieldRect.w-oksSurface->w)/2);
+    imageRect.y = fieldRect.y + ((fieldRect.h-oksSurface->h)/2);
 }
 
 Field::~Field()
 {
-
+    SDL_FreeSurface(oksSurface);
+    SDL_FreeSurface(iksSurface);
 }
 
 void Field::handle_rendering(SDL_Surface* screen)
@@ -60,16 +73,14 @@ void Field::handle_rendering(SDL_Surface* screen)
     //top
     lineColor(screen, fieldRect.x, fieldRect.y, fieldRect.x+fieldRect.w, fieldRect.y, 0x000000FF);
 
-    if(clicked)
+    if(fieldType == FT_IKS)
     {
-//        lineColor(screen, fieldRect.x, fieldRect.y+1, fieldRect.x+fieldRect.w, fieldRect.y+1, 0x000000FF);
-//        lineColor(screen, fieldRect.x, fieldRect.y+2, fieldRect.x+fieldRect.w, fieldRect.y+2, 0x111111FF);
-//        lineColor(screen, fieldRect.x, fieldRect.y+3, fieldRect.x+fieldRect.w, fieldRect.y+3, 0x222222FF);
-//        lineColor(screen, fieldRect.x+fieldRect.w-2, fieldRect.y, fieldRect.x+fieldRect.w-2, fieldRect.h+fieldRect.y, 0x000000FF);
-//        lineColor(screen, fieldRect.x+fieldRect.w-3, fieldRect.y, fieldRect.x+fieldRect.w-3, fieldRect.h+fieldRect.y, 0x111111FF);
-//        lineColor(screen, fieldRect.x+fieldRect.w-4, fieldRect.y, fieldRect.x+fieldRect.w-4, fieldRect.h+fieldRect.y, 0x222222FF);
+        SDL_BlitSurface(iksSurface, NULL, screen, &imageRect);
     }
-
+    else if(fieldType == FT_OKS)
+    {
+        SDL_BlitSurface(oksSurface, NULL, screen, &imageRect);
+    }
 }
 
 SDL_Rect Field::GetRect()
@@ -77,14 +88,48 @@ SDL_Rect Field::GetRect()
     return fieldRect;
 }
 
-void Field::SetClicked(bool click)
-{
-    clicked = click;
-}
-
 Field::FieldType Field::GetType()
 {
     return fieldType;
 }
 
+void Field::SetType(int playerNum)
+{
+    if(playerNum == 1)
+    {
+        fieldType = FT_IKS;
+    }
+    else if(playerNum == 2)
+    {
+        fieldType = FT_OKS;
+    }
+    else
+    {
+        throw std::string("unknown playerNum value: " + playerNum);
+    }
+}
+
+SDL_Surface* Field::load_image(std::string filename)
+{
+    SDL_Surface *loadedImage = NULL;
+    SDL_Surface *optimizedImage = NULL;
+
+    loadedImage = IMG_Load( filename.c_str() );
+
+    if( loadedImage != NULL )
+    {
+        optimizedImage = SDL_DisplayFormat( loadedImage );
+
+        SDL_FreeSurface( loadedImage );
+
+        if( optimizedImage != NULL )
+        {
+            Uint32 colorkey = SDL_MapRGB( optimizedImage->format, 0xAA, 0xAA, 0xAA );
+
+            SDL_SetColorKey( optimizedImage, SDL_SRCCOLORKEY, colorkey );
+        }
+    }
+
+    return optimizedImage;
+}
 

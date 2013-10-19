@@ -20,6 +20,7 @@ GameField::GameField(SDL_Surface *screen, int statusBarHeight)
     fields.push_back( new Field(9, screen, statusBarHeight) );
 
     winnerNum = -1;
+    previousFieldsLeft = 9;
 }
 
 GameField::~GameField()
@@ -27,65 +28,65 @@ GameField::~GameField()
 
 }
 
-void GameField::handle_events(SDL_Event event)
+void GameField::handle_events(SDL_Event event, int *currentPlayer)
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN)
+    if( (event.type == SDL_MOUSEBUTTONDOWN) && (event.button.button == SDL_BUTTON_LEFT) )
     {
-        if(event.button.button == SDL_BUTTON_LEFT)
+        for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); it++)
         {
-            for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); it++)
+            if( (GameWindow::IfMouseOverRect(event, (*it)->GetRect())==true) && ((*it)->GetType() == Field::FT_NONE ) )
             {
-                if( GameWindow::IfMouseOverRect(event, (*it)->GetRect() ) )
+                if(*currentPlayer == 1 || *currentPlayer == 2)
                 {
-                    (*it)->SetClicked(true);
+                    (*it)->SetType(*currentPlayer);
                 }
-            }
-        }
-    }
-    else if(event.type == SDL_MOUSEBUTTONUP)
-    {
-        if(event.button.button == SDL_BUTTON_LEFT)
-        {
-            for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); it++)
-            {
-                if( GameWindow::IfMouseOverRect(event, (*it)->GetRect() ) )
+                else
                 {
-                    (*it)->SetClicked(false);
+                    throw std::string("unknown currentPlayer value: " + *currentPlayer);
                 }
             }
         }
     }
 }
 
-void GameField::handle_logic(bool* gameDone)
+void GameField::handle_logic(bool* gameDone, int *currentPlayer)
 {
-    int fields_left=0;
-    for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); it++)
+    if(*gameDone == false)
     {
-        if( (*it)->GetType() == Field::FT_NONE )
+        int fields_left=0;
+        for(std::vector<Field*>::iterator it = fields.begin(); it != fields.end(); it++)
         {
-            fields_left++;
+            if( (*it)->GetType() == Field::FT_NONE )
+            {
+                fields_left++;
+            }
         }
-    }
 
-    Field::FieldType winner = checkForWinner();
-    if(winner != Field::FT_NONE)
-    {
-        *gameDone = true;
+        Field::FieldType winner = checkForWinner();
+        if(winner != Field::FT_NONE)
+        {
+            *gameDone = true;
 
-        if(winner == Field::FT_IKS)
-        {
-            winnerNum = 1;
+            if(winner == Field::FT_IKS)
+            {
+                winnerNum = 1;
+            }
+            else if(winner == Field::FT_OKS)
+            {
+                winnerNum = 2;
+            }
         }
-        else
+        else if(fields_left == 0)
         {
-            winnerNum = 2;
+            *gameDone = true;
+            winnerNum = 0;
         }
-    }
-    else if(fields_left == 0)
-    {
-        *gameDone = true;
-        winnerNum = 0;
+
+        if(fields_left == previousFieldsLeft-1)
+        {
+            previousFieldsLeft--;
+            *currentPlayer = ((*currentPlayer)%2) + 1;
+        }
     }
 }
 
@@ -119,26 +120,61 @@ void GameField::drawField(SDL_Surface *screen)
 Field::FieldType GameField::checkForWinner()
 {
     Field::FieldType winner = Field::FT_NONE;
+
+    // top row
     if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[1]->GetType()) && (fields[0]->GetType() == fields[2]->GetType()) )
     {
         winner = fields[0]->GetType();
     }
+
+    // middle row
     if( (fields[3]->GetType() != Field::FT_NONE) && (fields[3]->GetType() == fields[4]->GetType()) && (fields[3]->GetType() == fields[5]->GetType()) )
     {
         winner = fields[3]->GetType();
     }
+
+    // bottom row
     if( (fields[6]->GetType() != Field::FT_NONE) && (fields[6]->GetType() == fields[7]->GetType()) && (fields[7]->GetType() == fields[8]->GetType()) )
     {
         winner = fields[6]->GetType();
     }
+
+    // topleft-downright diagonal
     if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[4]->GetType()) && (fields[0]->GetType() == fields[8]->GetType()) )
     {
         winner = fields[0]->GetType();
     }
+
+    // topright-downleft diagonal
     if( (fields[2]->GetType() != Field::FT_NONE) && (fields[2]->GetType() == fields[4]->GetType()) && (fields[2]->GetType() == fields[6]->GetType()) )
+    {
+        winner = fields[2]->GetType();
+    }
+
+    // left column
+    if( (fields[0]->GetType() != Field::FT_NONE) && (fields[0]->GetType() == fields[3]->GetType()) && (fields[0]->GetType() == fields[5]->GetType()) )
+    {
+        winner = fields[0]->GetType();
+    }
+
+    // middle column
+    if( (fields[1]->GetType() != Field::FT_NONE) && (fields[1]->GetType() == fields[4]->GetType()) && (fields[1]->GetType() == fields[7]->GetType()) )
+    {
+        winner = fields[1]->GetType();
+    }
+
+    // right column
+    if( (fields[2]->GetType() != Field::FT_NONE) && (fields[2]->GetType() == fields[5]->GetType()) && (fields[2]->GetType() == fields[8]->GetType()) )
     {
         winner = fields[2]->GetType();
     }
 
     return winner;
 }
+
+int GameField::GetWinnerNum()
+{
+    return winnerNum;
+}
+
+

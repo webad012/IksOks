@@ -131,6 +131,8 @@ void ChooseWindow::handle_rendering()
     {
         throw std::string("flip problem");
     }
+
+    SDL_Delay(1);
 }
 
 

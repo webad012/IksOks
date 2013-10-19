@@ -25,6 +25,7 @@ private:
 
     int currentPlayer;
     int statusBarHeight;
+    int winnerNum;
 
     bool gameDone;
 

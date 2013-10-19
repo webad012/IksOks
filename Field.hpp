@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <iostream>
 #include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_image.h>
 
 class Field
 {
@@ -17,15 +18,19 @@ public:
     void handle_logic();
     void handle_rendering(SDL_Surface*);
 
-    void SetClicked(bool);
+    void SetType(int);
 
     SDL_Rect GetRect();
     FieldType GetType();
 
 private:
     SDL_Rect fieldRect;
-    bool clicked;
     FieldType fieldType;
+
+    SDL_Surface *iksSurface, *oksSurface;
+    SDL_Rect imageRect;
+
+    SDL_Surface* load_image(std::string);
 };
 
 #endif

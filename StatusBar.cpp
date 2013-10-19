@@ -17,11 +17,12 @@ StatusBar::StatusBar(SDL_Surface* screen, int height)
 
     currentPlayer = 0;
 
-    messageSS << "Current player: " << currentPlayer+1;
-
-    messageSurface = TTF_RenderText_Blended(statusFont, messageSS.str().c_str(), textColorBlack);
+    messageSS << "Na potezu igrač: " << currentPlayer;
+    messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);
     messageSurfaceOffset.x = (statusRect.w - messageSurface->w)/2;
     messageSurfaceOffset.y = (statusRect.h - messageSurface->h)/2;
+
+    previous_gamedone_status = true;
 }
 
 StatusBar::~StatusBar()
@@ -30,15 +31,31 @@ StatusBar::~StatusBar()
     SDL_FreeSurface(messageSurface);
 }
 
-void StatusBar::handle_logic(int curPlayer)
+void StatusBar::handle_logic(bool gameDone, int playerNum)
 {
-    if(curPlayer != currentPlayer)
+    if((gameDone == false) && (playerNum != currentPlayer))
     {
+        currentPlayer = playerNum;
+        messageSS.str("");
         messageSS.clear();
-        messageSS << "Current player: " << currentPlayer+1;
+        messageSS << "Na potezu igrač: " << currentPlayer;
+        std::cout << messageSS.str() << std::endl;
 
         SDL_FreeSurface(messageSurface);
-        messageSurface = TTF_RenderText_Blended(statusFont, messageSS.str().c_str(), textColorBlack);
+        messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);
+        previous_gamedone_status = false;
+    }
+    else if((gameDone == true) && (previous_gamedone_status == false))
+    {
+        currentPlayer = playerNum;
+        messageSS.str("");
+        messageSS.clear();
+        messageSS << "Pobednik: " << currentPlayer << ". igrač";
+        std::cout << messageSS.str() << std::endl;
+
+        SDL_FreeSurface(messageSurface);
+        messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);
+        previous_gamedone_status = true;
     }
 }
 

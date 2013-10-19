@@ -19,9 +19,12 @@ public:
 
     GameState GetState();
     void SetState(GameState);
+    void SetAIDifficulty(AIDifficulty);
 
 private:
     GameState playState;
+
+    AIDifficulty aiDifficulty;
 
     int currentPlayer;
     int statusBarHeight;

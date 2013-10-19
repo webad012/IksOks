@@ -6,9 +6,9 @@ StartWindow::StartWindow()
     drawMe = true;
     blinkTime = 800;
 
-    gameName = TTF_RenderUTF8_Solid(font50, "IKS OKS", textColorWhite);
-    blinkingText = TTF_RenderUTF8_Solid(font20, "Pritisni Enter za start.", textColorWhite);
-    bySignature = TTF_RenderUTF8_Solid(font10, "Napravio: Miloš Janković", textColorWhite);
+    gameName = TTF_RenderUTF8_Blended(font50, "IKS OKS", textColorWhite);
+    blinkingText = TTF_RenderUTF8_Blended(font20, "Pritisni Enter za start.", textColorWhite);
+    bySignature = TTF_RenderUTF8_Blended(font10, "Napravio: Miloš Janković", textColorWhite);
 }
 
 StartWindow::~StartWindow()

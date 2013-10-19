@@ -83,4 +83,14 @@ bool GameWindow::IfMouseOverRect(SDL_Event e, SDL_Rect r)
     return false;
 }
 
+bool GameWindow::IfMouseOverTriangle(SDL_Event e, int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    bool b1, b2, b3;
+
+    b1 = ((e.button.x - x2) * (y1 - y2)) - ((x1 - x2) * (e.button.y - y2)) < 0.0f;
+    b2 = (e.button.x - x3) * (y2- y3) - (x2 - x3) * (e.button.y - y3) < 0.0f;
+    b3 = (e.button.x - x1) * (y3 - y1) - (x3 - x1) * (e.button.y - y1) < 0.0f;
+
+    return ((b1 == b2) && (b2 == b3));
+}
 

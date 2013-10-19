@@ -63,7 +63,13 @@ void IksOksGame::handle_logic()
         if(_play_window->GetState() == GameWindow::GS_PlayState)
         {
             _play_window->SetState(_game_state);
+
+            if(_game_state == GameWindow::GS_PlayStatePvA)
+            {
+                _play_window->SetAIDifficulty( _choose_window->GetAIDiffictulty() );
+            }
         }
+
         _play_window->handle_logic();
     }
     else if( _game_state == GameWindow::GS_EndGame )

@@ -149,7 +149,6 @@ void GameField::handle_rendering(bool gameDone, SDL_Surface *screen)
         {
             SDL_BlitSurface(restartFontSurface, NULL, screen, &restartFontRect);
         }
-//        ApplySurface( (screen->w - blinkingText->w)/2, screen->h - screen->h/2, blinkingText, screen );
     }
 }
 
@@ -236,5 +235,395 @@ int GameField::GetWinnerNum()
 {
     return winnerNum;
 }
+
+void GameField::AIMakeMove(GameWindow::AIDifficulty aiDifficulty)
+{
+    bool moveMade = false;
+
+    if(aiDifficulty >= GameWindow::AI_Easy)
+    {
+        AI_complete_row(&moveMade);
+        AI_block_row(&moveMade);
+    }
+
+    if(aiDifficulty >= GameWindow::AI_Normal)
+    {
+        AI_set_trap(&moveMade);
+    }
+
+    if(aiDifficulty == GameWindow::AI_Hard)
+    {
+//        AI_block_trap();
+    }
+
+    AI_rand_move(&moveMade);
+}
+
+void GameField::AI_complete_row(bool *moveMade)
+{
+    if( *moveMade == false )
+    {
+        Uint32 delay = rand() % 500;
+        SDL_Delay(delay);
+        int space = -1;
+
+        // top row
+        if( (fields[0]->GetType() == Field::FT_NONE ) && (fields[1]->GetType() == Field::FT_OKS) && (fields[2]->GetType() == Field::FT_OKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS ) && (fields[1]->GetType() == Field::FT_NONE) && (fields[2]->GetType() == Field::FT_OKS) )
+        {
+            space = 1;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS) && (fields[1]->GetType() == Field::FT_OKS) && (fields[2]->GetType() == Field::FT_NONE) )
+        {
+            space = 2;
+        }
+
+        // middle row
+        else if( (fields[3]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_OKS) && (fields[5]->GetType() == Field::FT_OKS) )
+        {
+            space = 3;
+        }
+        else if( (fields[3]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[5]->GetType() == Field::FT_OKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[3]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_OKS) && (fields[5]->GetType() == Field::FT_NONE) )
+        {
+            space = 5;
+        }
+
+        // bottom row
+        else if( (fields[6]->GetType() == Field::FT_NONE) && (fields[7]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 6;
+        }
+        else if( (fields[6]->GetType() == Field::FT_OKS) && (fields[7]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 7;
+        }
+        else if( (fields[6]->GetType() == Field::FT_OKS) && (fields[7]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        // left column
+        else if( (fields[0]->GetType() == Field::FT_NONE) && (fields[3]->GetType() == Field::FT_OKS) && (fields[6]->GetType() == Field::FT_OKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS) && (fields[3]->GetType() == Field::FT_NONE) && (fields[6]->GetType() == Field::FT_OKS) )
+        {
+            space = 3;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS) && (fields[3]->GetType() == Field::FT_OKS) && (fields[6]->GetType() == Field::FT_NONE) )
+        {
+            space = 6;
+        }
+
+        // middle column
+        else if( (fields[1]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_OKS) && (fields[7]->GetType() == Field::FT_OKS) )
+        {
+            space = 1;
+        }
+        else if( (fields[1]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[7]->GetType() == Field::FT_OKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[1]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_OKS) && (fields[7]->GetType() == Field::FT_NONE) )
+        {
+            space = 7;
+        }
+
+        //right column
+        else if( (fields[2]->GetType() == Field::FT_NONE) && (fields[5]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 2;
+        }
+        else if( (fields[2]->GetType() == Field::FT_OKS) && (fields[5]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 5;
+        }
+        else if( (fields[2]->GetType() == Field::FT_OKS) && (fields[5]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        //topleft-downright diagonal
+        else if( (fields[0]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_OKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[0]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_OKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        //topright-downleft diagonal
+        else if( (fields[2]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_OKS) && (fields[6]->GetType() == Field::FT_OKS) )
+        {
+            space = 2;
+        }
+        else if( (fields[2]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[6]->GetType() == Field::FT_OKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[2]->GetType() == Field::FT_OKS) && (fields[4]->GetType() == Field::FT_OKS) && (fields[6]->GetType() == Field::FT_NONE) )
+        {
+            space = 6;
+        }
+
+        if(space != -1)
+        {
+            fields[space]->SetType(2);
+            *moveMade = true;
+        }
+    }
+
+}
+void GameField::AI_block_row(bool *moveMade)
+{
+    if( *moveMade == false )
+    {
+        Uint32 delay = rand() % 500;
+        SDL_Delay(delay);
+        int space = -1;
+
+        // top row
+        if( (fields[0]->GetType() == Field::FT_NONE ) && (fields[1]->GetType() == Field::FT_IKS) && (fields[2]->GetType() == Field::FT_IKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS ) && (fields[1]->GetType() == Field::FT_NONE) && (fields[2]->GetType() == Field::FT_IKS) )
+        {
+            space = 1;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS) && (fields[1]->GetType() == Field::FT_IKS) && (fields[2]->GetType() == Field::FT_NONE) )
+        {
+            space = 2;
+        }
+
+        // middle row
+        else if( (fields[3]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_IKS) && (fields[5]->GetType() == Field::FT_IKS) )
+        {
+            space = 3;
+        }
+        else if( (fields[3]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[5]->GetType() == Field::FT_IKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[3]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_IKS) && (fields[5]->GetType() == Field::FT_NONE) )
+        {
+            space = 5;
+        }
+
+        // bottom row
+        else if( (fields[6]->GetType() == Field::FT_NONE) && (fields[7]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 6;
+        }
+        else if( (fields[6]->GetType() == Field::FT_IKS) && (fields[7]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 7;
+        }
+        else if( (fields[6]->GetType() == Field::FT_IKS) && (fields[7]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        // left column
+        else if( (fields[0]->GetType() == Field::FT_NONE) && (fields[3]->GetType() == Field::FT_IKS) && (fields[6]->GetType() == Field::FT_IKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS) && (fields[3]->GetType() == Field::FT_NONE) && (fields[6]->GetType() == Field::FT_IKS) )
+        {
+            space = 3;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS) && (fields[3]->GetType() == Field::FT_IKS) && (fields[6]->GetType() == Field::FT_NONE) )
+        {
+            space = 6;
+        }
+
+        // middle column
+        else if( (fields[1]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_IKS) && (fields[7]->GetType() == Field::FT_IKS) )
+        {
+            space = 1;
+        }
+        else if( (fields[1]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[7]->GetType() == Field::FT_IKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[1]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_IKS) && (fields[7]->GetType() == Field::FT_NONE) )
+        {
+            space = 7;
+        }
+
+        //right column
+        else if( (fields[2]->GetType() == Field::FT_NONE) && (fields[5]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 2;
+        }
+        else if( (fields[2]->GetType() == Field::FT_IKS) && (fields[5]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 5;
+        }
+        else if( (fields[2]->GetType() == Field::FT_IKS) && (fields[5]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        //topleft-downright diagonal
+        else if( (fields[0]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 0;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[8]->GetType() == Field::FT_IKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[0]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_IKS) && (fields[8]->GetType() == Field::FT_NONE) )
+        {
+            space = 8;
+        }
+
+        //topright-downleft diagonal
+        else if( (fields[2]->GetType() == Field::FT_NONE) && (fields[4]->GetType() == Field::FT_IKS) && (fields[6]->GetType() == Field::FT_IKS) )
+        {
+            space = 2;
+        }
+        else if( (fields[2]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_NONE) && (fields[6]->GetType() == Field::FT_IKS) )
+        {
+            space = 4;
+        }
+        else if( (fields[2]->GetType() == Field::FT_IKS) && (fields[4]->GetType() == Field::FT_IKS) && (fields[6]->GetType() == Field::FT_NONE) )
+        {
+            space = 6;
+        }
+
+        if(space != -1)
+        {
+            fields[space]->SetType(2);
+            *moveMade = true;
+        }
+    }
+}
+
+void GameField::AI_set_trap(bool *moveMade)
+{
+    if( *moveMade == false )
+    {
+        if( ( fields[ 6 ]->GetType() == Field::FT_OKS ) && ( fields[ 4 ]->GetType() == Field::FT_OKS )
+            && ( fields[ 0 ]->GetType() == Field::FT_NONE ) && ( fields[ 7 ]->GetType() == Field::FT_NONE ) && ( fields[ 8 ]->GetType() == Field::FT_NONE ) )
+        {
+            fields[ 8 ]->SetType(2);
+            *moveMade = true;
+        }
+        else if( ( fields[ 0 ]->GetType() == Field::FT_OKS ) && ( fields[ 4 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 2 ]->GetType() == Field::FT_NONE ) && ( fields[ 3 ]->GetType() == Field::FT_NONE ) && ( fields[ 4 ]->GetType() == Field::FT_NONE ) )
+        {
+            fields[ 6 ]->SetType(2);
+            *moveMade = true;
+        }
+        else if( ( fields[ 2 ]->GetType() == Field::FT_OKS ) && ( fields[ 4 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 6 ]->GetType() == Field::FT_NONE ) && ( fields[ 3 ]->GetType() == Field::FT_NONE ) && ( fields[ 0 ]->GetType() == Field::FT_NONE ) )
+        {
+            fields[ 0 ]->SetType(2);
+            *moveMade = true;
+        }
+        else if( ( fields[ 8 ]->GetType() == Field::FT_OKS ) && ( fields[ 4 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 0 ]->GetType() == Field::FT_NONE ) && ( fields[ 2 ]->GetType() == Field::FT_NONE ) && ( fields[ 5 ]->GetType() == Field::FT_NONE ) )
+        {
+            fields[ 2 ]->SetType(2);
+            *moveMade = true;
+        }
+
+
+        else if( fields[ 4 ]->GetType() == Field::FT_OKS )
+        {
+            if( ( fields[ 1 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 0 ]->GetType() == Field::FT_NONE ) && ( fields[ 2 ]->GetType() == Field::FT_NONE ) )
+            {
+                if( fields[ 6 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 2 ]->SetType(2);
+                    *moveMade = true;
+                }
+                else if( fields[ 8 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 0 ]->SetType(2);
+                    *moveMade = true;
+                }
+
+
+            }
+            else if( ( fields[ 3 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 0 ]->GetType() == Field::FT_NONE ) && ( fields[ 6 ]->GetType() == Field::FT_NONE ) )
+            {
+                if( fields[ 2 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 6 ]->SetType(2);
+                    *moveMade = true;
+                }
+                else if( fields[ 8 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 0 ]->SetType(2);
+                    *moveMade = true;
+                }
+            }
+            else if( ( fields[ 5 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 2 ]->GetType() == Field::FT_NONE ) && ( fields[ 8 ]->GetType() == Field::FT_NONE ) )
+            {
+                if( fields[ 0 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 0 ]->SetType(2);
+                    *moveMade = true;
+                }
+                else if( fields[ 6 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 2 ]->SetType(2);
+                    *moveMade = true;
+                }
+            }
+            else if( ( fields[ 7 ]->GetType() == Field::FT_OKS )
+                && ( fields[ 6 ]->GetType() == Field::FT_NONE ) && ( fields[ 8 ]->GetType() == Field::FT_NONE ) )
+            {
+                if( fields[ 0 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 8 ]->SetType(2);
+                    *moveMade = true;
+                }
+                else if( fields[ 2 ]->GetType() == Field::FT_NONE )
+                {
+                    fields[ 6 ]->SetType(2);
+                    *moveMade = true;
+                }
+            }
+        }
+    }
+}
+
+void GameField::AI_rand_move(bool *moveMade)
+{
+    while(*moveMade == false)
+    {
+        Uint32 delay = rand() % 500;
+        SDL_Delay(delay);
+        int space = rand()%9;
+
+        if( fields[space]->GetType() == Field::FT_NONE )
+        {
+            fields[space]->SetType(2);
+            *moveMade = true;
+        }
+    }
+}
+
 
 

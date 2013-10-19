@@ -21,6 +21,7 @@ public:
 
 private:
     GameWindow::GameState _game_state;
+    GameWindow::AIDifficulty aiDifficulty;
 
     StartWindow *_start_window;
     ChooseWindow *_choose_window;

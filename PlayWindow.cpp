@@ -19,23 +19,30 @@ PlayWindow::~PlayWindow()
 
 void PlayWindow::handle_events(bool* quit, GameState* gamestate)
 {
-    while( SDL_PollEvent( &event ) )
+    if( (gameDone == false) && (currentPlayer == 2) && (playState == GameWindow::GS_PlayStatePvA) )
     {
-        if(gameDone == false)
+        _game_field->AIMakeMove(aiDifficulty);
+    }
+    else
+    {
+        while( SDL_PollEvent( &event ) )
         {
-            _game_field->handle_events(event, &currentPlayer);
-        }
-        else if(gameDone == true)
-        {
-            if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_RETURN) )
+            if(gameDone == false)
             {
-                *gamestate = GameWindow::GS_EndGame;
+                _game_field->handle_events(event, &currentPlayer);
             }
-        }
+            else if(gameDone == true)
+            {
+                if( (event.type == SDL_KEYDOWN) && (event.key.keysym.sym == SDLK_RETURN) )
+                {
+                    *gamestate = GameWindow::GS_EndGame;
+                }
+            }
 
-        if( event.type == SDL_QUIT )
-        {
-            *quit = true;
+            if( event.type == SDL_QUIT )
+            {
+                *quit = true;
+            }
         }
     }
 }
@@ -75,6 +82,11 @@ void PlayWindow::handle_rendering()
 void PlayWindow::SetState(GameState state)
 {
     playState = state;
+}
+
+void PlayWindow::SetAIDifficulty(AIDifficulty diff)
+{
+    aiDifficulty = diff;
 }
 
 GameWindow::GameState PlayWindow::GetState()

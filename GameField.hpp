@@ -21,6 +21,8 @@ public:
 
     int GetWinnerNum();
 
+    void AIMakeMove(GameWindow::AIDifficulty);
+
 private:
     SDL_Rect fieldRect;
 
@@ -40,6 +42,12 @@ private:
     Uint32 last_time;
     Uint32 blinkTime;
     bool drawMe;
+
+    void AI_complete_row(bool*);
+    void AI_block_row(bool*);
+    void AI_set_trap(bool*);
+    void AI_block_trap(bool*);
+    void AI_rand_move(bool*);
 };
 
 #endif

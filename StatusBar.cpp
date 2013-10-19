@@ -21,7 +21,7 @@ StatusBar::StatusBar(SDL_Surface* screen, int height)
     currentPlayer = 0;
 
     messageSS << "Na potezu igrač: " << currentPlayer;
-    messageSurface = TTF_RenderUTF8_Solid(statusFont, messageSS.str().c_str(), textColorBlack);
+    messageSurface = TTF_RenderUTF8_Blended(statusFont, messageSS.str().c_str(), textColorBlack);
     messageSurfaceOffset.x = (statusRect.w - messageSurface->w)/2;
     messageSurfaceOffset.y = (statusRect.h - messageSurface->h)/2;
 
